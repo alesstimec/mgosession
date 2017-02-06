@@ -54,11 +54,17 @@ type Logger interface {
 //
 // All the sessions will be coped (with Session.Copy) from s.
 //
+// If maxSessions is less than 1 it will be set to 1 - the session
+// pool may not contain fewer than 1 session.
+//
 // The logger is used to log informational messages about the pool
 // and may be nil if no logging is required.
 func NewPool(logger Logger, s *mgo.Session, maxSessions int) *Pool {
 	if logger == nil {
 		logger = nullLogger{}
+	}
+	if maxSessions < 1 {
+		maxSessions = 1
 	}
 	p := &Pool{
 		sessions: make([]*mgo.Session, maxSessions),
